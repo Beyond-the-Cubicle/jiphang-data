@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Link {
+  id             Int    @id @default(autoincrement())
+  /// 노선 ID
+  route_id       String
+  /// 정류장 ID
+  sttn_id        String
+  /// 정류장간 구간거리
+  sttn_dstnc_mtr Int
+  /// 정류장 순서
+  sttn_ordr      Int
+
+  @@unique([route_id, sttn_id])
+  @@map("link")
+}
+
+model Route {
+  id         Int    @id @default(autoincrement())
+  /// 노선 ID
+  route_id   String @unique
+  /// 노선명
+  route_nm   String
+  /// 노선 유형
+  route_type String
+  /// 거리
+  dstnc      Int
+
+  @@map("route")
+}
+
+model Station {
+  id                    Int    @id @default(autoincrement())
+  /// 정류장 ID
+  sttn_id               String @unique
+  /// 정류장 명칭
+  sttn_nm               String
+  /// 정류장 유형
+  sttn_type             String
+  /// 정류장번호 ARS ID
+  /// 0인 경우가 있는데
+  /// 미사용(폐쇄 및 변경), 통합, 가상정류장에 대해서 0을 사용
+  sttn_no               String
+  /// 정류장 X좌표 / GRS80 좌표계
+  crdnt_x               Int
+  /// 정류장 Y좌표 / GRS80 좌표계
+  crdnt_y               Int
+  /// 버스도착정보 안내기 설치여부
+  businfo_fclt_instl_yn String
+
+  @@map("station")
+}
