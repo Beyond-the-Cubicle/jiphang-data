@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Link {
+model SeoulLink {
   id             Int    @id @default(autoincrement())
   /// 노선 ID
   route_id       String
@@ -22,10 +22,10 @@ model Link {
   sttn_ordr      Int
 
   @@unique([route_id, sttn_id])
-  @@map("link")
+  @@map("seoul_link")
 }
 
-model Route {
+model SeoulRoute {
   id         Int    @id @default(autoincrement())
   /// 노선 ID
   route_id   String @unique
@@ -36,10 +36,10 @@ model Route {
   /// 거리
   dstnc      Int
 
-  @@map("route")
+  @@map("seoul_route")
 }
 
-model Station {
+model SeoulStation {
   id                    Int    @id @default(autoincrement())
   /// 정류장 ID
   sttn_id               String @unique
@@ -58,5 +58,5 @@ model Station {
   /// 버스도착정보 안내기 설치여부
   businfo_fclt_instl_yn String
 
-  @@map("station")
+  @@map("seoul_station")
 }

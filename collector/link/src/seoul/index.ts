@@ -24,7 +24,7 @@ for (let i = start, page = 1; i < end; i += step, page++) {
 
   const routes = result.tbisMasterRoute.row;
 
-  await prisma.route.createMany({
+  await prisma.seoulRoute.createMany({
     data: routes.map((route) => ({
       route_id: route.ROUTE_ID,
       route_nm: route.ROUTE_NM,
@@ -50,7 +50,7 @@ for (let i = start, page = 1; i < end; i += step, page++) {
 
   const routes = result.tbisMasterStation.row;
 
-  await prisma.station.createMany({
+  await prisma.seoulStation.createMany({
     data: routes.map((route) => ({
       sttn_id: route.STTN_ID,
       sttn_nm: route.STTN_NM,
@@ -79,7 +79,7 @@ for (let i = start, page = 1; i < end; i += step, page++) {
 
   const routes = result.masterRouteNode.row;
 
-  await prisma.link.createMany({
+  await prisma.seoulLink.createMany({
     data: routes.map((route) => ({
       sttn_id: route.STTN_ID,
       route_id: route.ROUTE_ID,
