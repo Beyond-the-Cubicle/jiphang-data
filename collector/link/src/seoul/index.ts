@@ -1,10 +1,11 @@
-import { linkUrl, request, routeUrl, stationUrl } from "./request.ts";
 import { PrismaClient } from "@prisma/client";
 import {
   SeoulLinkResponse,
   SeoulRouteResponse,
   SeoulStationResponse,
 } from "./interface.ts";
+import { request } from "../request.ts";
+import { linkUrl, routeUrl, stationUrl } from "./url.ts";
 
 const prisma = new PrismaClient();
 

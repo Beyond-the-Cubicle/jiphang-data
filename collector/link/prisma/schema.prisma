@@ -60,3 +60,103 @@ model SeoulStation {
 
   @@map("seoul_station")
 }
+
+model GyeonggiLink {
+  id                          Int     @id @default(autoincrement())
+  /// 노선 ID
+  route_id                    String?
+  /// 정류장 순서
+  sttn_ordr                   Int?
+  /// 정류장 ID
+  sttn_id                     String?
+  /// GIS 거리
+  gis_dstn                    Int?
+  /// 누적 거리
+  accmlt_dstn                 Int?
+  /// 실제거리
+  real_dstn                   Int?
+  /// 확정 거리
+  dcsn_dstn                   Int?
+  /// 진행구분 코드
+  progrs_div_cd               String?
+  /// 등록아이디
+  regist_id                   String?
+  /// 등록일자
+  regist_de                   String?
+  /// 사용구분
+  use_div                     String?
+  /// 벽지노선 유무
+  unwel_hno_statn_route_extno String?
+  /// 진행구분 코드명
+  progrs_div_cd_nm            String?
+  /// 벽지노선 유무명
+  use_div_nm                  String?
+
+  @@unique([route_id, sttn_id])
+  @@map("gyeonggi_link")
+}
+
+model GyeonggiStation {
+  id                 Int     @id @default(autoincrement())
+  /// 정류장 ID
+  sttn_id            String  @unique
+  /// 정류장 명칭
+  sttn_nm            String?
+  /// X 좌표
+  x_crdnt            Int?
+  /// Y 좌표
+  y_crdnt            Int?
+  /// GPS X좌표
+  gps_x_crdnt        Int?
+  /// GPS Y좌표
+  gps_y_crdnt        Int?
+  /// 링크 아이디
+  rink_id            String?
+  /// 정류장 유형
+  sttn_type          String?
+  /// 환승정류장 유무
+  transit_sttn_extno String?
+  /// 중앙차로 여부
+  cntr_cartrk_yn     String?
+  /// 정류장 영문명
+  sttn_eng_nm        String?
+  /// ARS ID
+  /// 서울과 경기의 ARS ID가 다름
+  /// 서울: 서울00000 (서울 prefix 가 붙음)
+  /// 경기: 00000
+  ars_id             String?
+  /// 기관코드
+  inst_cd            String?
+  /// 데이터 표출 유무
+  data_exprs_extno   String?
+  /// 등록 아이디
+  regist_id          String?
+  /// 등록 일자
+  regist_de          String?
+  /// 비고
+  rm                 String?
+  /// 표지판 유형
+  signpost_type      String?
+  /// 행정동코드
+  administ_dong_cd   String?
+  /// 권역코드
+  volm_statn_cd      String?
+  /// 사용구분
+  use_div            String?
+  /// 정류장 중국어명
+  sttn_chn_nm        String?
+  /// 정류장 일본어명
+  sttn_jpnlang_nm    String?
+  /// 정류장 베트남어명
+  sttn_vietnam_nm    String?
+  /// DRT 유무
+  drt_extno          String?
+  /// 정류장 유형명
+  station_tp_nm      String?
+  /// 환승역타입명
+  chng_station_yn_nm String?
+  /// 표지판 유형명
+  mark_type_nm       String?
+
+  @@map("gyeonggi_station")
+}

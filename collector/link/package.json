@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "seoul": "bun src/seoul/index.ts"
+    "seoul": "bun src/seoul/index.ts",
+    "gg": "bun src/gg/index.ts"
   },
   "devDependencies": {
     "bun-types": "latest",
