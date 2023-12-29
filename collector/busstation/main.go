@@ -7,12 +7,16 @@ import (
 	"net/http"
 
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/database"
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/dto"
 	"github.com/mitchellh/mapstructure"
 )
 
 func main() {
+	database.ConnectDb()
 	collectGynggiBusStations()
+
+	database.Db.Close()
 }
 
 func collectGynggiBusStations() {
@@ -67,6 +71,10 @@ func collectGynggiBusStations() {
 	}
 
 	fmt.Printf("[정상 수집 완료] Collected BusStation Count: %d\n", len(busStations))
+
+	// DB에 저장
+	insertBusStations(busStations)
+	fmt.Printf("경기도 버스 정류장 정보 DB 저장 완료")
 }
 
 func makeOpenApiResponseHead(rawOpenApiResponse dto.RawOpenAPIResponse) dto.OpenAPIResponseHead {
@@ -111,4 +119,18 @@ func makeBusStations(rawOpenApiResponse dto.RawOpenAPIResponse) []dto.BusStation
 	}
 
 	return busStations
+}
+
+// TODO: 벌크 insert
+func insertBusStations(busStations []dto.BusStation) {
+	for _, busstation := range busStations {
+		_, err := database.Db.Exec("INSERT INTO bus_station VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			busstation.StationId, busstation.StationName, busstation.EnglishStationName, busstation.ArsId,
+			busstation.StationDivisionName, busstation.GovermentOfficeName, busstation.Location,
+			busstation.Latitude, busstation.Longitude, busstation.CityCode, busstation.CityName,
+		)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
