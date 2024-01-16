@@ -10,21 +10,26 @@ import (
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/database"
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/dto"
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
 	"github.com/mitchellh/mapstructure"
 )
 
 func main() {
-	database.ConnectDb()
-	deleteAllBusStations()
-	// TODO: TAGO가 아닌 서울, 경기만 별도로 하려면, 겹치는 stationId 해결해야함 -> 문제는 stationId 겹칠 때 ARS ID가 다른 경우가 있음
-	// collectSeoulBusStations()
-	// collectGynggiBusStations()
-	collectTagoBusStations()
-	database.Db.Close()
+	store := store.New()
 
+	database.ConnectDb()
+	err := store.DeleteAllBusStations()
+	if err != nil {
+		panic("delete all bus stations failed - " + err.Error())
+	}
+	// TODO: TAGO가 아닌 서울, 경기만 별도로 하려면, 겹치는 stationId 해결해야함 -> 문제는 stationId 겹칠 때 ARS ID가 다른 경우가 있음
+	collectSeoulBusStations(store)
+	// collectGynggiBusStations()
+	// collectTagoBusStations()
+	store.Close()
 }
 
-func collectSeoulBusStations() {
+func collectSeoulBusStations(store store.Store) {
 	fmt.Printf("=============== 서울 버스 정류장 수집 시작 ===============\n")
 	var apiError dto.OpenAPIError
 	startIndex := 1
@@ -68,7 +73,7 @@ func collectSeoulBusStations() {
 	fmt.Printf("[서울 버스 정상 수집 완료] Collected BusStation Count: %d\n", len(busStations))
 
 	// DB에 저장
-	insertBusStations(busStations)
+	insertBusStations(store, busStations)
 	fmt.Printf("서울 버스 정류장 정보 DB 저장 완료\n")
 	fmt.Printf("=============== 서울 버스 정류장 수집 종료 ===============\n")
 }
@@ -105,7 +110,7 @@ func requestSeoulBusStations(startIndex int, endIndex int) (dto.SeoulRawOpenAPIR
 	return rawOpenApiResponse, apiError, url
 }
 
-func collectGynggiBusStations() {
+func collectGynggiBusStations(store store.Store) {
 	fmt.Printf("=============== 경기도 버스 정류장 수집 시작 ===============\n")
 	var apiError dto.OpenAPIError
 	pageSize := 1000
@@ -159,7 +164,7 @@ func collectGynggiBusStations() {
 	fmt.Printf("[경기도 버스 정상 수집 완료] Collected BusStation Count: %d\n", len(busStations))
 
 	// DB에 저장
-	insertBusStations(busStations)
+	insertBusStations(store, busStations)
 	fmt.Printf("경기도 버스 정류장 정보 DB 저장 완료\n")
 	fmt.Printf("=============== 경기도 버스 정류장 수집 종료 ===============\n")
 }
@@ -209,12 +214,16 @@ func makeBusStations(rawOpenApiResponse dto.GyunggiRawOpenAPIResponse) []dto.Bus
 }
 
 // TODO: 벌크 insert
-func insertBusStations(busStations []dto.BusStation) {
+func insertBusStations(store store.Store, busStations []dto.BusStation) {
 	for _, busstation := range busStations {
-		_, err := database.Db.Exec("INSERT INTO bus_station VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			busstation.StationId, busstation.StationName, busstation.EnglishStationName, busstation.ArsId,
-			busstation.StationDivisionName, busstation.GovermentOfficeName, busstation.Location,
-			busstation.Latitude, busstation.Longitude, busstation.CityCode, busstation.CityName,
+		err := store.CreateBusStations(
+			busstation.StationId,
+			busstation.StationName,
+			busstation.ArsId,
+			busstation.Latitude,
+			busstation.Longitude,
+			busstation.CityCode,
+			busstation.CityName,
 		)
 		if err != nil {
 			panic(err)
@@ -222,16 +231,7 @@ func insertBusStations(busStations []dto.BusStation) {
 	}
 }
 
-func deleteAllBusStations() {
-	fmt.Printf("=============== 버스 정류장 전체 데이터 제거 시작 ===============\n")
-	_, err := database.Db.Exec("DELETE FROM bus_station")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("=============== 버스 정류장 전체 데이터 제거 종료 ===============\n")
-}
-
-func collectTagoBusStations() {
+func collectTagoBusStations(store store.Store) {
 	fmt.Printf("=============== TAGO 버스 정류장 수집 시작 ===============\n")
 	var apiError dto.OpenAPIError
 	pageIndex := 1
@@ -271,7 +271,7 @@ func collectTagoBusStations() {
 	fmt.Printf("[TAGO 버스 정상 수집 완료] Collected BusStation Count: %d\n", len(busStations))
 
 	// DB에 저장
-	insertBusStations(busStations)
+	insertBusStations(store, busStations)
 	fmt.Printf("TAGO 버스 정류장 정보 DB 저장 완료\n")
 	fmt.Printf("=============== TAGO 버스 정류장 수집 종료 ===============\n")
 }
