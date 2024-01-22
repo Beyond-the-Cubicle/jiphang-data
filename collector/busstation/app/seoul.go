@@ -92,24 +92,6 @@ func (app *app) ConvertSeoulBusStationsToStandard(seoulOpenApiBusStations []Seou
 	return busStations, nil
 }
 
-func (app *app) InsertBusStations(busStations []store.BusStation) error {
-	for _, busstation := range busStations {
-		err := app.store.CreateBusStations(
-			busstation.StationId,
-			busstation.StationName,
-			busstation.ArsId,
-			busstation.Latitude,
-			busstation.Longitude,
-			busstation.CityCode,
-			busstation.CityName,
-		)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func requestSeoulBusStations(apiKey string, docType DocType, startIndex int, endIndex int) (SeoulRawOpenAPIResponse, OpenAPIError, string) {
 	var apiError OpenAPIError
 	var openAPIFailResponse OpenAPIFailResponse
