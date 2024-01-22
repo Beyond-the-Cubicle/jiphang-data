@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
 )
 
@@ -116,7 +115,7 @@ func requestSeoulBusStations(apiKey string, docType DocType, startIndex int, end
 	var openAPIFailResponse OpenAPIFailResponse
 	var rawOpenApiResponse SeoulRawOpenAPIResponse
 
-	url := fmt.Sprintf("http://openapi.seoul.go.kr:8088/%s/%s/tbisMasterStation/%d/%d", config.SeoulApiKey, config.DocType, startIndex, endIndex)
+	url := fmt.Sprintf("http://openapi.seoul.go.kr:8088/%s/%s/tbisMasterStation/%d/%d", apiKey, docType, startIndex, endIndex)
 	response, err := http.Get(url)
 	if err != nil {
 		panic(err)
