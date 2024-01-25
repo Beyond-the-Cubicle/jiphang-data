@@ -9,8 +9,8 @@ import (
 
 func main() {
 	// TODO: 외부 config 파일 로드해서 사용하도록 수정
-	var gyunggiApiKey = "39ddaa503de8488995343515399f539e"
 	var seoulApiKey = "65674a58626f776c36356c51774d6a"
+	var gyunggiApiKey = "39ddaa503de8488995343515399f539e"
 
 	store := store.New()
 	application := app.New(store)
@@ -52,9 +52,6 @@ func collectSeoulBusStations(application app.App, seoulApiKey string) {
 }
 
 func collectGyunggiBusStations(application app.App, gyunggiApiKey string) {
-	// TODO
-	return
-
 	fmt.Printf("=============== 경기 버스정류장 데이터 수집 시작 ===============\n")
 	gyunggiOpenApiBusStations, err := application.CollectGyunggiBusStations(gyunggiApiKey, app.Json)
 	if err != nil {
