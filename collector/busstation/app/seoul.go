@@ -27,7 +27,7 @@ type SeoulOpenAPIBusStation struct {
 	STTN_NO               string  // 정류장 번호(ARS ID)
 	CRDNT_X               float64 // 경도
 	CRDNT_Y               float64 // 위도
-	BUSINFO_FCLT_INSTL_YN string  // 버스도착정보아낸기 설치 여부
+	BUSINFO_FCLT_INSTL_YN string  // 버스도착정보안내기 설치 여부
 }
 
 func (openApiBusStation *SeoulOpenAPIBusStation) ToBusStation() store.BusStation {
