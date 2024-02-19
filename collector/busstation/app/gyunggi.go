@@ -127,14 +127,19 @@ func (app *app) ConvertGyunggiBusStationsToStandard(gyunggiOpenApiBusStations []
 func correctGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) []GyunggiOpenAPIBusStation {
 	var correctedGyunggiBusStations []GyunggiOpenAPIBusStation
 	for _, gyunggiOpenApiBusStation := range gyunggiOpenApiBusStations {
-		// 경기도 정류장 데이터에서 stationName에 "서울"이 들어가는 케이스는 서울시에서 제공하는 정류장 데이터와 중복되므로 제거
+		// 경기도 정류장 데이터에서 ArsId에 "서울"이 들어가는 케이스는 서울시에서 제공하는 정류장 데이터와 중복되므로 제거
 		if strings.Contains(gyunggiOpenApiBusStation.ArsId, "서울") {
 			continue
 		}
-		// 정류장 이름이 비어있는 데이터 제외
+		// 정류장 이름이 없는 데이터 제외
+		if gyunggiOpenApiBusStation.StationName == "" {
+			continue
+		}
+		// ArsId가 없는 데이터 제외
 		if gyunggiOpenApiBusStation.ArsId == "" {
 			continue
 		}
+		// TODO: x, y 좌표 위경도로 변환
 		correctedGyunggiBusStations = append(correctedGyunggiBusStations, gyunggiOpenApiBusStation)
 	}
 	return correctedGyunggiBusStations
