@@ -30,14 +30,32 @@ type SeoulOpenAPIBusStation struct {
 	BUSINFO_FCLT_INSTL_YN string  // 버스도착정보안내기 설치 여부
 }
 
-func (openApiBusStation *SeoulOpenAPIBusStation) ToBusStation() store.BusStation {
-	return store.BusStation{
+func (openApiBusStation *SeoulOpenAPIBusStation) ToBusStation() store.StandardBusStation {
+	return store.StandardBusStation{
 		StationName: openApiBusStation.STTN_NM,
 		StationId:   openApiBusStation.STTN_ID,
 		ArsId:       openApiBusStation.STTN_NO,
 		Latitude:    openApiBusStation.CRDNT_Y,
 		Longitude:   openApiBusStation.CRDNT_X,
 	}
+}
+
+func (app *app) InsertSeoulBusStations(seoulOpenApiBusStations []SeoulOpenAPIBusStation) error {
+	for _, seoulOpenApiBusStation := range seoulOpenApiBusStations {
+		err := app.seoulStore.CreateBusStations(
+			seoulOpenApiBusStation.STTN_ID,
+			seoulOpenApiBusStation.STTN_NM,
+			seoulOpenApiBusStation.STTN_TYPE,
+			seoulOpenApiBusStation.STTN_NO,
+			seoulOpenApiBusStation.CRDNT_X,
+			seoulOpenApiBusStation.CRDNT_Y,
+			seoulOpenApiBusStation.BUSINFO_FCLT_INSTL_YN,
+		)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (app *app) CollectSeoulBusStations(apiKey string, docType DocType) ([]SeoulOpenAPIBusStation, error) {
@@ -84,8 +102,8 @@ func (app *app) CollectSeoulBusStations(apiKey string, docType DocType) ([]Seoul
 	return seoulOpenApiBusStations, nil
 }
 
-func (app *app) ConvertSeoulBusStationsToStandard(seoulOpenApiBusStations []SeoulOpenAPIBusStation) ([]store.BusStation, error) {
-	var busStations []store.BusStation
+func (app *app) ConvertSeoulBusStationsToStandard(seoulOpenApiBusStations []SeoulOpenAPIBusStation) ([]store.StandardBusStation, error) {
+	var busStations []store.StandardBusStation
 	for _, seoulOpenApiBusStation := range seoulOpenApiBusStations {
 		busStations = append(busStations, seoulOpenApiBusStation.ToBusStation())
 	}

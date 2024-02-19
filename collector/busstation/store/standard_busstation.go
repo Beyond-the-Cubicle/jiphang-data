@@ -2,7 +2,7 @@ package store
 
 import "strings"
 
-type BusStation struct {
+type StandardBusStation struct {
 	StationId   string
 	StationName string
 	ArsId       string
@@ -12,7 +12,7 @@ type BusStation struct {
 	CityName    string
 }
 
-func (store *store) CreateBusStations(stationId string, stationName string, arsId string, latitude float64, longitude float64, cityCode string, cityName string) error {
+func (store *standardStore) CreateBusStations(stationId string, stationName string, arsId string, latitude float64, longitude float64, cityCode string, cityName string) error {
 	_, err := store.db.Exec("INSERT INTO bus_station VALUES (?, ?, ?, ?, ?, ?, ?)",
 		stationId,
 		stationName,
@@ -25,8 +25,8 @@ func (store *store) CreateBusStations(stationId string, stationName string, arsI
 	return err
 }
 
-func (store *store) ReadBusStation(stationId string) (BusStation, error) {
-	result := BusStation{}
+func (store *standardStore) ReadBusStation(stationId string) (StandardBusStation, error) {
+	result := StandardBusStation{}
 	err := store.db.QueryRow("SELECT * FROM bus_station WHERE stationId = ?", stationId).Scan(
 		&result.StationId,
 		&result.StationName,
@@ -38,8 +38,8 @@ func (store *store) ReadBusStation(stationId string) (BusStation, error) {
 	return result, err
 }
 
-func (store *store) ReadBusStations(stationIds []string) ([]BusStation, error) {
-	results := []BusStation{}
+func (store *standardStore) ReadBusStations(stationIds []string) ([]StandardBusStation, error) {
+	results := []StandardBusStation{}
 	rows, err := store.db.Query("SELECT * FROM bus_station WHERE stationId in (?" + strings.Repeat(",?", len(stationIds)-1) + ")")
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (store *store) ReadBusStations(stationIds []string) ([]BusStation, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		result := BusStation{}
+		result := StandardBusStation{}
 		err := rows.Scan(
 			&result.StationId,
 			&result.StationName,
@@ -64,8 +64,8 @@ func (store *store) ReadBusStations(stationIds []string) ([]BusStation, error) {
 	return results, err
 }
 
-func (store *store) ReadAllBusStations() ([]BusStation, error) {
-	results := []BusStation{}
+func (store *standardStore) ReadAllBusStations() ([]StandardBusStation, error) {
+	results := []StandardBusStation{}
 	rows, err := store.db.Query("SELECT * FROM bus_station")
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func (store *store) ReadAllBusStations() ([]BusStation, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		result := BusStation{}
+		result := StandardBusStation{}
 		err := rows.Scan(
 			&result.StationId,
 			&result.StationName,
@@ -90,7 +90,7 @@ func (store *store) ReadAllBusStations() ([]BusStation, error) {
 	return results, err
 }
 
-func (store *store) DeleteAllBusStations() error {
+func (store *standardStore) DeleteAllBusStations() error {
 	_, err := store.db.Exec("DELETE FROM bus_station")
 	return err
 }

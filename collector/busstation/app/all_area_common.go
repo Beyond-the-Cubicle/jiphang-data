@@ -2,7 +2,7 @@ package app
 
 import "github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
 
-func (app *app) InsertBusStations(busStations []store.BusStation) error {
+func (app *app) InsertBusStations(busStations []store.StandardBusStation) error {
 	for _, busstation := range busStations {
 		err := app.store.CreateBusStations(
 			busstation.StationId,

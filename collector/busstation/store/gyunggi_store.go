@@ -1,6 +1,8 @@
 package store
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type GyunggiStore interface {
 	CreateBusStations(
@@ -33,9 +35,9 @@ type GyunggiStore interface {
 		transferStationTypeName string,
 		signPostTypeName string,
 	) error
-	ReadBusStation(stationId string) (BusStation, error)
-	ReadBusStations(stationIds []string) ([]BusStation, error)
-	ReadAllBusStations() ([]BusStation, error)
+	ReadBusStation(stationId string) (GyunggiBusStation, error)
+	ReadBusStations(stationIds []string) ([]GyunggiBusStation, error)
+	ReadAllBusStations() ([]GyunggiBusStation, error)
 	DeleteAllBusStations() error
 }
 
@@ -55,6 +57,6 @@ func NewGyunggiStore() *gyunggiStore {
 	return &gyunggiStore{db: db}
 }
 
-func (store *store) CloseGyunggiStore() {
+func (store *gyunggiStore) CloseGyunggiStore() {
 	store.db.Close()
 }

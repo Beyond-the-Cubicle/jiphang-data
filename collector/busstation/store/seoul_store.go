@@ -1,12 +1,14 @@
 package store
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type SeoulStore interface {
 	CreateBusStations(stationId string, stationName string, stationType string, arsId string, coordinateX float64, coordinateY float64, busArrivalInfoGuideInstallYn string) error
-	ReadBusStation(stationId string) (BusStation, error)
-	ReadBusStations(stationIds []string) ([]BusStation, error)
-	ReadAllBusStations() ([]BusStation, error)
+	ReadBusStation(stationId string) (SeoulBusStation, error)
+	ReadBusStations(stationIds []string) ([]SeoulBusStation, error)
+	ReadAllBusStations() ([]SeoulBusStation, error)
 	DeleteAllBusStations() error
 }
 

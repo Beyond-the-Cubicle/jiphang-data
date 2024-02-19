@@ -6,19 +6,19 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Store interface {
+type StandardStore interface {
 	CreateBusStations(stationId string, stationName string, arsId string, latitude float64, longitude float64, cityCode string, cityName string) error
-	ReadBusStation(stationId string) (BusStation, error)
-	ReadBusStations(stationIds []string) ([]BusStation, error)
-	ReadAllBusStations() ([]BusStation, error)
+	ReadBusStation(stationId string) (StandardBusStation, error)
+	ReadBusStations(stationIds []string) ([]StandardBusStation, error)
+	ReadAllBusStations() ([]StandardBusStation, error)
 	DeleteAllBusStations() error
 }
 
-type store struct {
+type standardStore struct {
 	db *sql.DB
 }
 
-func New() *store {
+func NewStandardStore() *standardStore {
 	databaseType := "mysql"
 	databaseUrl := "root:@tcp(127.0.0.1:3306)/chulgeun_gil_planner"
 
@@ -27,9 +27,9 @@ func New() *store {
 		panic("failed to connect database - " + err.Error())
 	}
 
-	return &store{db: db}
+	return &standardStore{db: db}
 }
 
-func (store *store) Close() {
+func (store *standardStore) Close() {
 	store.db.Close()
 }

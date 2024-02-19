@@ -53,7 +53,7 @@ type GyunggiOpenAPIBusStation struct {
 	SignPostTypeName        string  `mapstructure:"MARK_TYPE_NM"`       // 표지판 유형 이름(ex. 표지판 없음)
 }
 
-func (gyunggiOpenAPIBusStation *GyunggiOpenAPIBusStation) ToBusStation() store.BusStation {
+func (gyunggiOpenAPIBusStation *GyunggiOpenAPIBusStation) ToBusStation() store.StandardBusStation {
 	regex := regexp.MustCompile("[0-9]+")
 	arsIdCandidates := regex.FindAllString(gyunggiOpenAPIBusStation.ArsId, -1)
 	arsId := gyunggiOpenAPIBusStation.ArsId
@@ -61,7 +61,7 @@ func (gyunggiOpenAPIBusStation *GyunggiOpenAPIBusStation) ToBusStation() store.B
 		arsId = arsIdCandidates[0]
 	}
 
-	return store.BusStation{
+	return store.StandardBusStation{
 		StationName: gyunggiOpenAPIBusStation.StationName,
 		StationId:   gyunggiOpenAPIBusStation.StationId,
 		ArsId:       arsId,
@@ -112,12 +112,51 @@ func (app *app) CollectGyunggiBusStations(apiKey string, docType DocType) ([]Gyu
 	return gyunggiOpenAPIBusStations, nil
 }
 
-func (app *app) ConvertGyunggiBusStationsToStandard(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) ([]store.BusStation, error) {
-	var busStations []store.BusStation
+func (app *app) ConvertGyunggiBusStationsToStandard(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) ([]store.StandardBusStation, error) {
+	var busStations []store.StandardBusStation
 	for _, gyunggiOpenApiBusStation := range gyunggiOpenApiBusStations {
 		busStations = append(busStations, gyunggiOpenApiBusStation.ToBusStation())
 	}
 	return busStations, nil
+}
+
+func (app *app) InsertGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) error {
+	for _, gyunggiOpenApiBusStation := range gyunggiOpenApiBusStations {
+		err := app.gyunggiStore.CreateBusStations(
+			gyunggiOpenApiBusStation.StationId,
+			gyunggiOpenApiBusStation.StationName,
+			gyunggiOpenApiBusStation.CoordinateX,
+			gyunggiOpenApiBusStation.CoordinateY,
+			gyunggiOpenApiBusStation.GpsCoordinateX,
+			gyunggiOpenApiBusStation.GpsCoordinateY,
+			gyunggiOpenApiBusStation.RinkId,
+			gyunggiOpenApiBusStation.StationType,
+			gyunggiOpenApiBusStation.TransferStationExtNo,
+			gyunggiOpenApiBusStation.MedianBusLaneYn,
+			gyunggiOpenApiBusStation.StationEnglishName,
+			gyunggiOpenApiBusStation.ArsId,
+			gyunggiOpenApiBusStation.InstitutionCode,
+			gyunggiOpenApiBusStation.DataDisplayYn,
+			gyunggiOpenApiBusStation.RegisteredBy,
+			gyunggiOpenApiBusStation.RegisteredAt,
+			gyunggiOpenApiBusStation.Memo,
+			gyunggiOpenApiBusStation.SignPostType,
+			gyunggiOpenApiBusStation.DongCode,
+			gyunggiOpenApiBusStation.RegionCode,
+			gyunggiOpenApiBusStation.UseYn,
+			gyunggiOpenApiBusStation.StationChineseName,
+			gyunggiOpenApiBusStation.StationJapaneseName,
+			gyunggiOpenApiBusStation.StationVietnamName,
+			gyunggiOpenApiBusStation.DrtYn,
+			gyunggiOpenApiBusStation.StationTypeName,
+			gyunggiOpenApiBusStation.TransferStationTypeName,
+			gyunggiOpenApiBusStation.SignPostTypeName,
+		)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func requestGyunggiBusStations(apiKey string, docType DocType, pageIndex int, pageSize int) (GyunggiOpenApiResponse, OpenAPIError, string) {
