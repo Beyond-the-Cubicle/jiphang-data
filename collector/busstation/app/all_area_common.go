@@ -14,8 +14,6 @@ func (app *app) InsertBusStations(busStations []store.StandardBusStation) error 
 			busstation.ArsId,
 			busstation.Latitude,
 			busstation.Longitude,
-			busstation.CityCode,
-			busstation.CityName,
 		)
 		if err != nil {
 			fmt.Printf("[InsertBusStations] error occurred busStation: %+v\n", busstation)

@@ -7,7 +7,7 @@ import (
 )
 
 type StandardStore interface {
-	CreateBusStations(stationId string, stationName string, arsId string, latitude float64, longitude float64, cityCode string, cityName string) error
+	CreateBusStations(stationId string, stationName string, arsId string, latitude float64, longitude float64) error
 	ReadBusStation(stationId string) (StandardBusStation, error)
 	ReadBusStations(stationIds []string) ([]StandardBusStation, error)
 	ReadAllBusStations() ([]StandardBusStation, error)
