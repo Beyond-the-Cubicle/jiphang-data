@@ -57,6 +57,6 @@ func NewGyunggiStore() *gyunggiStore {
 	return &gyunggiStore{db: db}
 }
 
-func (store *gyunggiStore) CloseGyunggiStore() {
+func (store *gyunggiStore) Close() {
 	store.db.Close()
 }

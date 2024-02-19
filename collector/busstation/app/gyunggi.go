@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
 	"github.com/mitchellh/mapstructure"
@@ -114,10 +115,29 @@ func (app *app) CollectGyunggiBusStations(apiKey string, docType DocType) ([]Gyu
 
 func (app *app) ConvertGyunggiBusStationsToStandard(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) ([]store.StandardBusStation, error) {
 	var busStations []store.StandardBusStation
-	for _, gyunggiOpenApiBusStation := range gyunggiOpenApiBusStations {
+	correctedGyunggiBusStations := correctGyunggiBusStations(gyunggiOpenApiBusStations)
+	for _, gyunggiOpenApiBusStation := range correctedGyunggiBusStations {
 		busStations = append(busStations, gyunggiOpenApiBusStation.ToBusStation())
 	}
+
+	fmt.Printf("경기도 필터링 후 버스정류장 개수: %d\n", len(busStations))
 	return busStations, nil
+}
+
+func correctGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) []GyunggiOpenAPIBusStation {
+	var correctedGyunggiBusStations []GyunggiOpenAPIBusStation
+	for _, gyunggiOpenApiBusStation := range gyunggiOpenApiBusStations {
+		// 경기도 정류장 데이터에서 stationName에 "서울"이 들어가는 케이스는 서울시에서 제공하는 정류장 데이터와 중복되므로 제거
+		if strings.Contains(gyunggiOpenApiBusStation.ArsId, "서울") {
+			continue
+		}
+		// 정류장 이름이 비어있는 데이터 제외
+		if gyunggiOpenApiBusStation.ArsId == "" {
+			continue
+		}
+		correctedGyunggiBusStations = append(correctedGyunggiBusStations, gyunggiOpenApiBusStation)
+	}
+	return correctedGyunggiBusStations
 }
 
 func (app *app) InsertGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) error {

@@ -1,6 +1,10 @@
 package app
 
-import "github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
+import (
+	"fmt"
+
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
+)
 
 func (app *app) InsertBusStations(busStations []store.StandardBusStation) error {
 	for _, busstation := range busStations {
@@ -14,6 +18,7 @@ func (app *app) InsertBusStations(busStations []store.StandardBusStation) error 
 			busstation.CityName,
 		)
 		if err != nil {
+			fmt.Printf("[InsertBusStations] error occurred busStation: %+v\n", busstation)
 			return err
 		}
 	}

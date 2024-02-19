@@ -107,6 +107,7 @@ func (app *app) ConvertSeoulBusStationsToStandard(seoulOpenApiBusStations []Seou
 	for _, seoulOpenApiBusStation := range seoulOpenApiBusStations {
 		busStations = append(busStations, seoulOpenApiBusStation.ToBusStation())
 	}
+	fmt.Printf("서울 필터링 후 버스정류장 개수: %d\n", len(busStations))
 	return busStations, nil
 }
 

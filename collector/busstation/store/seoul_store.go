@@ -28,6 +28,6 @@ func NewSeoulStore() *seoulStore {
 	return &seoulStore{db: db}
 }
 
-func (store *seoulStore) CloseSeoulStore() {
+func (store *seoulStore) Close() {
 	store.db.Close()
 }
