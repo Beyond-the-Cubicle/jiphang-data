@@ -11,6 +11,7 @@ import (
 
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
 	"github.com/mitchellh/mapstructure"
+	"github.com/twpayne/go-proj/v10"
 )
 
 type GyunggiOpenApiResponse struct {
@@ -139,10 +140,33 @@ func correctGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStat
 		if gyunggiOpenApiBusStation.ArsId == "" {
 			continue
 		}
-		// TODO: x, y 좌표 위경도로 변환
+		// bessel x, y 좌표 WGS84 - 위경도로 변환
+		latitude, longitude, err := bessel1884TMToWGS84(gyunggiOpenApiBusStation.CoordinateX, gyunggiOpenApiBusStation.CoordinateY)
+		if err != nil {
+			panic("경기도 좌표 변환(bessel -> WGS84) 실패 - " + err.Error())
+		}
+		gyunggiOpenApiBusStation.CoordinateX = longitude
+		gyunggiOpenApiBusStation.CoordinateY = latitude
+
 		correctedGyunggiBusStations = append(correctedGyunggiBusStations, gyunggiOpenApiBusStation)
 	}
 	return correctedGyunggiBusStations
+}
+
+func bessel1884TMToWGS84(x, y float64) (float64, float64, error) {
+	// EPSG:4326 -> WGS84 경위도
+	// EPSG:5174 -> 오래된 지리원 표준 중 보정된 중부원점(Bessel) - KLIS에서 중부지역에 사용중
+	pj, err := proj.NewCRSToCRS("EPSG:5174", "EPSG:4326", nil)
+	if err != nil {
+		return 0, 0, err
+	}
+	inputCoordinate := proj.NewCoord(x, y, 0, 0)
+	convertedCoordinate, err := pj.Forward(inputCoordinate)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return convertedCoordinate.X(), convertedCoordinate.Y(), nil
 }
 
 func (app *app) InsertGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) error {
