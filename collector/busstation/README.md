@@ -19,7 +19,7 @@ TBD
 <br>
 
 # 데이터 구조
-TBD
+일단 resource/database_ddl.sql 파일 참고해주세요.
 
 <br>
 
