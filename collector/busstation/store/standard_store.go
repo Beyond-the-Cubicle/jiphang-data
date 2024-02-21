@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -18,11 +19,8 @@ type standardStore struct {
 	db *sql.DB
 }
 
-func NewStandardStore() *standardStore {
-	databaseType := "mysql"
-	databaseUrl := "root:@tcp(127.0.0.1:3306)/chulgeun_gil_planner"
-
-	db, err := sql.Open(databaseType, databaseUrl)
+func NewStandardStore(appConfig config.Config) *standardStore {
+	db, err := sql.Open(appConfig.DatabaseType, appConfig.DatabaseUrl)
 	if err != nil {
 		panic("failed to connect database - " + err.Error())
 	}

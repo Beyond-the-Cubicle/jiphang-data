@@ -58,14 +58,14 @@ func (app *app) InsertSeoulBusStations(seoulOpenApiBusStations []SeoulOpenAPIBus
 	return nil
 }
 
-func (app *app) CollectSeoulBusStations(apiKey string, docType DocType) ([]SeoulOpenAPIBusStation, error) {
+func (app *app) CollectSeoulBusStations(docType DocType) ([]SeoulOpenAPIBusStation, error) {
 	var apiError OpenAPIError
 	startIndex := 1
 	endIndex := 1000
 	var seoulOpenApiBusStations []SeoulOpenAPIBusStation
 
 	// 정류장 전체 카운트 구하기
-	responseForCount, apiError, _ := requestSeoulBusStations(apiKey, docType, 1, 1)
+	responseForCount, apiError, _ := requestSeoulBusStations(app.seoulApiKey, docType, 1, 1)
 	if (responseForCount.TbisMasterStation.List_total_count == 0 && apiError != OpenAPIError{}) {
 		errorMessage := fmt.Sprintf("[에러 응답 수신] URL: %s, code: %s, message: %s\n", apiError.Url, apiError.Result.Code, apiError.Result.Message)
 		return nil, errors.New(errorMessage)
@@ -74,7 +74,7 @@ func (app *app) CollectSeoulBusStations(apiKey string, docType DocType) ([]Seoul
 	fmt.Printf("서울 수집 대상 버스정류장 개수: %d\n", totalCount)
 
 	for {
-		response, apiError, url := requestSeoulBusStations(apiKey, docType, startIndex, endIndex)
+		response, apiError, url := requestSeoulBusStations(app.seoulApiKey, docType, startIndex, endIndex)
 		if (response.TbisMasterStation.List_total_count == 0 && apiError != OpenAPIError{}) {
 			errorMessage := fmt.Sprintf("[에러 응답 수신] URL: %s, code: %s, message: %s\n", apiError.Url, apiError.Result.Code, apiError.Result.Message)
 			return seoulOpenApiBusStations, errors.New(errorMessage)

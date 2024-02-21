@@ -72,13 +72,13 @@ func (gyunggiOpenAPIBusStation *GyunggiOpenAPIBusStation) ToBusStation() store.S
 	}
 }
 
-func (app *app) CollectGyunggiBusStations(apiKey string, docType DocType) ([]GyunggiOpenAPIBusStation, error) {
+func (app *app) CollectGyunggiBusStations(docType DocType) ([]GyunggiOpenAPIBusStation, error) {
 	var apiError OpenAPIError
 	pageIndex := 1
 	pageSize := 1000
 	var gyunggiOpenAPIBusStations []GyunggiOpenAPIBusStation
 
-	responseForCount, apiError, _ := requestGyunggiBusStations(apiKey, docType, 1, 1)
+	responseForCount, apiError, _ := requestGyunggiBusStations(app.gyunggiApiKey, docType, 1, 1)
 	if (apiError != OpenAPIError{}) {
 		errorMessage := fmt.Sprintf("[에러 응답 수신] URL: %s, code: %s, message: %s\n", apiError.Url, apiError.Result.Code, apiError.Result.Message)
 		return nil, errors.New(errorMessage)
@@ -87,7 +87,7 @@ func (app *app) CollectGyunggiBusStations(apiKey string, docType DocType) ([]Gyu
 	fmt.Printf("경기도 수집 대상 버스정류장 개수: %d\n", headForTotalCount.TotalCount)
 
 	for {
-		response, apiError, url := requestGyunggiBusStations(apiKey, docType, pageIndex, pageSize)
+		response, apiError, url := requestGyunggiBusStations(app.gyunggiApiKey, docType, pageIndex, pageSize)
 		if (apiError != OpenAPIError{}) {
 			errorMessage := fmt.Sprintf("[에러 응답 수신] URL: %s, code: %s, message: %s\n", apiError.Url, apiError.Result.Code, apiError.Result.Message)
 			return nil, errors.New(errorMessage)

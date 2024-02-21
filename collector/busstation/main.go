@@ -1,22 +1,42 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/app"
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
 	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
 )
 
 func main() {
-	// TODO: 외부 config 파일 로드해서 사용하도록 수정
-	var seoulApiKey = "65674a58626f776c36356c51774d6a"
-	var gyunggiApiKey = "39ddaa503de8488995343515399f539e"
+	// 배포환경 인자
+	var env = flag.String("env", "local", "배포 환경 입력 - ex. local|dev|stg|prd")
+	flag.Parse()
+	fmt.Printf("env: %v\n", *env)
 
-	standardStore := store.NewStandardStore()
-	seoulStore := store.NewSeoulStore()
-	gyunggiStore := store.NewGyunggiStore()
-	application := app.New(standardStore, seoulStore, gyunggiStore)
+	// 설정값 로드
+	appConfig := config.NewConfig(*env)
+	fmt.Printf("appConfig: %+v\n", appConfig)
 
+	standardStore := store.NewStandardStore(appConfig)
+	seoulStore := store.NewSeoulStore(appConfig)
+	gyunggiStore := store.NewGyunggiStore(appConfig)
+	application := app.New(appConfig, standardStore, seoulStore, gyunggiStore)
+
+	// DB 내 데이터 모두 제거
+	clearDB(standardStore, seoulStore, gyunggiStore)
+
+	// TODO: go루틴 사용해서 IO 작업 비동기 수행
+	collectSeoulBusStations(application)
+	collectGyunggiBusStations(application)
+
+	standardStore.Close()
+	seoulStore.Close()
+	gyunggiStore.Close()
+}
+
+func clearDB(standardStore store.StandardStore, seoulStore store.SeoulStore, gyunggiStore store.GyunggiStore) {
 	fmt.Printf("=============== 버스정류장 DB 데이터 초기화 시작 ===============\n")
 	err := standardStore.DeleteAllBusStations()
 	if err != nil {
@@ -31,18 +51,11 @@ func main() {
 		panic("경기 버스정류장 데이터 초기화 실패 - " + err.Error())
 	}
 	fmt.Printf("=============== 버스정류장 DB 데이터 초기화 완료 ===============\n")
-
-	collectSeoulBusStations(application, seoulApiKey)
-	collectGyunggiBusStations(application, gyunggiApiKey)
-
-	standardStore.Close()
-	seoulStore.Close()
-	gyunggiStore.Close()
 }
 
-func collectSeoulBusStations(application app.App, seoulApiKey string) {
+func collectSeoulBusStations(application app.App) {
 	fmt.Printf("=============== 서울 버스정류장 데이터 수집 시작 ===============\n")
-	seoulOpenApiBusStations, err := application.CollectSeoulBusStations(seoulApiKey, app.Json)
+	seoulOpenApiBusStations, err := application.CollectSeoulBusStations(app.Json)
 	if err != nil {
 		panic("서울 버스 정류장 수집 중 오류 발생 - " + err.Error())
 	}
@@ -70,9 +83,9 @@ func collectSeoulBusStations(application app.App, seoulApiKey string) {
 	fmt.Printf("=============== 서울 버스정류장 데이터 DB 저장 완료 ===============\n")
 }
 
-func collectGyunggiBusStations(application app.App, gyunggiApiKey string) {
+func collectGyunggiBusStations(application app.App) {
 	fmt.Printf("=============== 경기 버스정류장 데이터 수집 시작 ===============\n")
-	gyunggiOpenApiBusStations, err := application.CollectGyunggiBusStations(gyunggiApiKey, app.Json)
+	gyunggiOpenApiBusStations, err := application.CollectGyunggiBusStations(app.Json)
 	if err != nil {
 		panic("경기 버스 정류장 수집 중 오류 발생 - " + err.Error())
 	}

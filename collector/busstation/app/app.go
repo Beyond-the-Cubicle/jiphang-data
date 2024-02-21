@@ -1,10 +1,13 @@
 package app
 
-import "github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
+import (
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/store"
+)
 
 type App interface {
-	CollectSeoulBusStations(apiKey string, docType DocType) ([]SeoulOpenAPIBusStation, error)
-	CollectGyunggiBusStations(apiKey string, docType DocType) ([]GyunggiOpenAPIBusStation, error)
+	CollectSeoulBusStations(docType DocType) ([]SeoulOpenAPIBusStation, error)
+	CollectGyunggiBusStations(docType DocType) ([]GyunggiOpenAPIBusStation, error)
 	InsertSeoulBusStations(seoulOpenApiBusStations []SeoulOpenAPIBusStation) error
 	InsertGyunggiBusStations(gyunggiOpenApiBusStations []GyunggiOpenAPIBusStation) error
 	ConvertSeoulBusStationsToStandard(seoulOpenApiBusStations []SeoulOpenAPIBusStation) ([]store.StandardBusStation, error)
@@ -13,15 +16,19 @@ type App interface {
 }
 
 type app struct {
-	store        store.StandardStore
-	seoulStore   store.SeoulStore
-	gyunggiStore store.GyunggiStore
+	seoulApiKey   string
+	gyunggiApiKey string
+	store         store.StandardStore
+	seoulStore    store.SeoulStore
+	gyunggiStore  store.GyunggiStore
 }
 
-func New(store store.StandardStore, seoulStore store.SeoulStore, gyunggiStore store.GyunggiStore) *app {
+func New(appConfig config.Config, store store.StandardStore, seoulStore store.SeoulStore, gyunggiStore store.GyunggiStore) *app {
 	return &app{
-		store:        store,
-		seoulStore:   seoulStore,
-		gyunggiStore: gyunggiStore,
+		seoulApiKey:   appConfig.SeoulApiKey,
+		gyunggiApiKey: appConfig.GyunggiApiKey,
+		store:         store,
+		seoulStore:    seoulStore,
+		gyunggiStore:  gyunggiStore,
 	}
 }

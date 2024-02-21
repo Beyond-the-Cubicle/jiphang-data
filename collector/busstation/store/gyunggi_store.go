@@ -2,6 +2,8 @@ package store
 
 import (
 	"database/sql"
+
+	"github.com/Beyond-the-Cubicle/cgp-data/collector/busstation/config"
 )
 
 type GyunggiStore interface {
@@ -45,11 +47,8 @@ type gyunggiStore struct {
 	db *sql.DB
 }
 
-func NewGyunggiStore() *gyunggiStore {
-	databaseType := "mysql"
-	databaseUrl := "root:@tcp(127.0.0.1:3306)/chulgeun_gil_planner"
-
-	db, err := sql.Open(databaseType, databaseUrl)
+func NewGyunggiStore(appConfig config.Config) *gyunggiStore {
+	db, err := sql.Open(appConfig.DatabaseType, appConfig.DatabaseUrl)
 	if err != nil {
 		panic("failed to connect database - " + err.Error())
 	}
