@@ -7,8 +7,14 @@ import (
 )
 
 type GyunggiStore interface {
-	CreateBusLinks()
-	DeleteAllBusLinks()
+	CreateBusLinks(
+		routeId int64,
+		stationOrder int,
+		stationId int64,
+		gisDistance, accumulatedDistance, realDistance, decidedDistance int,
+		progressCode, registeredBy, registeredAt, useDivision, regionalLineYn, progressCodeName, useDivisionName string,
+	) error
+	DeleteAllBusLinks() error
 }
 
 type gyunggiStore struct {
