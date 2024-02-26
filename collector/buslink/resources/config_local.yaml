@@ -1,0 +1,11 @@
+# api:
+#   key:
+#     seoul: seoulApiKey
+#     gyunggi: gyunggiApiKey
+# database:
+#   type: mysql
+#   url: 127.0.0.1
+#   port: 3306
+#   id: id
+#   password: password
+#   database-name: dbName
