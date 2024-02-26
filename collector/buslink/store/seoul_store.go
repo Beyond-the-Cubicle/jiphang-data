@@ -8,8 +8,8 @@ import (
 )
 
 type SeoulStore interface {
-	CreateBusLinks()
-	DeleteAllBusLinks()
+	CreateBusLinks(routeId, stationId int64, stationDistanceMeter, stationOrder int) error
+	DeleteAllBusLinks() error
 }
 
 type seoulStore struct {
