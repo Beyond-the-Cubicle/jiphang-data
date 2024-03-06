@@ -7,7 +7,7 @@ import (
 
 type App interface {
 	CollectSeoulBusLinks(docType DocType) ([]SeoulOpenApiBusLink, error)
-	CollectGyunggiBusLinks()
+	CollectGyunggiBusLinks(docType DocType) ([]GyunggiOpenApiBusLink, error)
 }
 
 type app struct {

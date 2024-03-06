@@ -24,6 +24,7 @@ func main() {
 	application := app.New(appConfig, seoulStore, gyunggiStore)
 
 	seoulBusLinks, _ := application.CollectSeoulBusLinks(app.Json)
-	fmt.Printf("link count: %d", len(seoulBusLinks))
-	application.CollectGyunggiBusLinks()
+	fmt.Printf("seoul link count: %d", len(seoulBusLinks))
+	gyunggiBusLinks, _ := application.CollectGyunggiBusLinks(app.Json)
+	fmt.Printf("gyunggi link count: %d", len(gyunggiBusLinks))
 }
