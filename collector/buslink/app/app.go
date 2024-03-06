@@ -6,7 +6,7 @@ import (
 )
 
 type App interface {
-	CollectSeoulBusLinks()
+	CollectSeoulBusLinks(docType DocType) ([]SeoulOpenApiBusLink, error)
 	CollectGyunggiBusLinks()
 }
 
