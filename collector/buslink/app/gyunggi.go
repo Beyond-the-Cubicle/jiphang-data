@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/mitchellh/mapstructure"
 )
@@ -34,6 +35,41 @@ type GyunggiOpenApiBusLink struct {
 	IsRegionalLine           string `mapstructure:"UNWEL_HNO_STATN_ROUTE_EXTNO"` // 벽지노선 유무
 	ProgressDivisionCodeName string `mapstructure:"PROGRS_DIV_CD_NM"`            // 진행구분코드명
 	UseDivisionName          string `mapstructure:"USE_DIV_NM"`                  // 벽지노선 유무명
+}
+
+func (app *app) InsertGyunggiBusLinks(gyunggiOpenApiBusLinks []GyunggiOpenApiBusLink) error {
+	for _, link := range gyunggiOpenApiBusLinks {
+		routeId, err := strconv.ParseInt(link.RouteId, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		stationId, err := strconv.ParseInt(link.StationId, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		err = app.gyunggiStore.CreateBusLinks(
+			routeId,
+			link.StationOrder,
+			stationId,
+			link.GisDistance,
+			link.AccumulatedDistance,
+			link.RealDistance,
+			link.DecidedDistance,
+			link.ProgressDivisionCode,
+			link.RegisteredBy,
+			link.RegisteredAt,
+			link.UseDivision,
+			link.IsRegionalLine,
+			link.ProgressDivisionCodeName,
+			link.UseDivisionName,
+		)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (app *app) CollectGyunggiBusLinks(docType DocType) ([]GyunggiOpenApiBusLink, error) {

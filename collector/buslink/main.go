@@ -23,8 +23,22 @@ func main() {
 	gyunggiStore := store.NewGyunggiStore(appConfig)
 	application := app.New(appConfig, seoulStore, gyunggiStore)
 
-	seoulBusLinks, _ := application.CollectSeoulBusLinks(app.Json)
-	fmt.Printf("seoul link count: %d", len(seoulBusLinks))
-	gyunggiBusLinks, _ := application.CollectGyunggiBusLinks(app.Json)
-	fmt.Printf("gyunggi link count: %d", len(gyunggiBusLinks))
+	seoulBusLinks, err := application.CollectSeoulBusLinks(app.Json)
+	if err != nil {
+		panic(err)
+	}
+	err = application.InsertSeoulBusLinks(seoulBusLinks)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("seoul link count: %d\n", len(seoulBusLinks))
+	gyunggiBusLinks, err := application.CollectGyunggiBusLinks(app.Json)
+	if err != nil {
+		panic(err)
+	}
+	err = application.InsertGyunggiBusLinks(gyunggiBusLinks)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("gyunggi link count: %d\n", len(gyunggiBusLinks))
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/mitchellh/mapstructure"
 )
@@ -24,6 +25,32 @@ type SeoulOpenApiBusLink struct {
 	StationId     string  `mapstructure:"STTN_ID"`
 	DistanceMeter float64 `mapstructure:"STTN_DSTNC_MTR"`
 	StationOrder  float64 `mapstructure:"STTN_ORD"`
+}
+
+func (app *app) InsertSeoulBusLinks(seoulOpenApiBusLinks []SeoulOpenApiBusLink) error {
+	for _, link := range seoulOpenApiBusLinks {
+		routeId, err := strconv.ParseInt(link.RouteId, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		stationId, err := strconv.ParseInt(link.StationId, 10, 64)
+		if err != nil {
+			return err
+		}
+
+		err = app.seoulStore.CreateBusLinks(
+			routeId,
+			stationId,
+			int(link.DistanceMeter),
+			int(link.StationOrder),
+		)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (app *app) CollectSeoulBusLinks(docType DocType) ([]SeoulOpenApiBusLink, error) {
