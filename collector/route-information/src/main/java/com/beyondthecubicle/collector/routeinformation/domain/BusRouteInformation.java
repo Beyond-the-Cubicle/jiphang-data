@@ -44,8 +44,11 @@ public class BusRouteInformation {
     @Comment("노선번호")
     private String routeName;
 
-    @Comment("배차간격")
-    private Integer dispatchInterval;
+    @Comment("평일 최소 배차시간")
+    private Integer minimumDispatchInterval;
+
+    @Comment("평일 최대 배차시간")
+    private Integer maximumDispatchInterval;
 
     @Comment("운행횟수")
     private Integer operationCount;
@@ -58,6 +61,12 @@ public class BusRouteInformation {
 
     @Comment("기점 막차 시간")
     private LocalTime startStationLastTime;
+
+    @Comment("기점 저상 첫차 시간")
+    private LocalTime startStationLowFirstTime;
+
+    @Comment("기점 저상 막차 시간")
+    private LocalTime startStationLowLastTime;
 
     @Comment("종점")
     private String endStationName;
@@ -84,11 +93,14 @@ public class BusRouteInformation {
                 .region(Region.GYEONGGI)
                 .routeId(busRouteInformation.getRouteId())
                 .routeName(busRouteInformation.getRouteName())
-                .dispatchInterval(calculateDispatchInterval(busRouteInformation))
+                .minimumDispatchInterval(Integer.parseInt(busRouteInformation.getPeekAlloc()))
+                .maximumDispatchInterval(Integer.parseInt(busRouteInformation.getNPeekAlloc()))
                 .operationCount(null)
                 .startStationName(busRouteInformation.getStartStationName())
                 .startStationFirstTime(parseBusRouteTime(busRouteInformation.getUpFirstTime()))
                 .startStationLastTime(parseBusRouteTime(busRouteInformation.getUpLastTime()))
+                .startStationLowFirstTime(null)
+                .startStationLowLastTime(null)
                 .endStationName(busRouteInformation.getEndStationName())
                 .endStationFirstTime(parseBusRouteTime(busRouteInformation.getDownFirstTime()))
                 .endStationLastTime(parseBusRouteTime(busRouteInformation.getDownLastTime()))
@@ -100,11 +112,14 @@ public class BusRouteInformation {
                 .region(Region.SEOUL)
                 .routeId(seoulBusRouteInformationResponse.getBusRouteId())
                 .routeName(seoulBusRouteInformationResponse.getBusRouteName())
-                .dispatchInterval(Integer.parseInt(seoulBusRouteInformationResponse.getTerm()))
+                .minimumDispatchInterval(Integer.parseInt(seoulBusRouteInformationResponse.getTerm()))
+                .maximumDispatchInterval(Integer.parseInt(seoulBusRouteInformationResponse.getTerm()))
                 .operationCount(null)
                 .startStationName(seoulBusRouteInformationResponse.getStartStationName())
                 .startStationFirstTime(parseBusRouteTime(seoulBusRouteInformationResponse.getFirstBusTime()))
                 .startStationLastTime(parseBusRouteTime(seoulBusRouteInformationResponse.getLastBusTime()))
+                .startStationLowFirstTime(parseBusRouteTime(seoulBusRouteInformationResponse.getFirstLowTime()))
+                .startStationLowLastTime(parseBusRouteTime(seoulBusRouteInformationResponse.getLastLowTime()))
                 .endStationName(seoulBusRouteInformationResponse.getEndStationName())
                 .endStationFirstTime(null)
                 .endStationLastTime(null)
@@ -123,10 +138,6 @@ public class BusRouteInformation {
                 .region(region)
                 .routeId(routeId)
                 .build();
-    }
-
-    private static Integer calculateDispatchInterval(GyeonggiBusRouteInformationResponse.BusRouteInformation busRouteInformation) {
-        return Integer.parseInt(busRouteInformation.getPeekAlloc()) + Integer.parseInt(busRouteInformation.getNPeekAlloc()) / 2;
     }
 
     private static LocalTime parseBusRouteTime(String time) {
