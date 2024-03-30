@@ -24,18 +24,23 @@ TBD
 <br>
 
 # 실행 방법
-아직 dockerize 되어있지 않아 환경설정이 필요합니다.
 
-<br>
+## docker build & run
+[build]<br>
+docker buildx build --platform linux/amd64 --tag busstation-collector:0.0.1 .
 
-## golang 설치
-https://go.dev/doc/install 참고하여 golang 설치
+[run]<br>
+docker run -p 3306:3306 busstation-collector:0.0.1
 
-<br>
+## mac local 환경
+mac 로컬환경에서는 config_local.yaml 파일의 database.url 프로퍼티 값을 host.docker.internal 로 세팅해야합니다.
+- https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
 
-## proj 설치
-좌표 변환 목적<br>
-https://proj.org/en/9.3/install.html 참고하여 설치
+[build]<br>
+docker build -f DockerfileForMac --tag busstation-collector-mac:0.0.1 .
+
+[run]<br>
+docker run -p 3306:3306 busstation-collector-mac:0.0.1
 
 <br>
 
@@ -81,5 +86,6 @@ $ go run main.go
 <br>
 
 # TODO
-- dockerize
 - 비동기 로직 추가로 성능 개선
+- 환경에 따른 docker build (local, dev 등)
+- 도커 이미지 실행용 스테이지 추가
