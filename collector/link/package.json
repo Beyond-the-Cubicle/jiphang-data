@@ -5,6 +5,7 @@
   "scripts": {
     "seoul": "bun src/seoul/index.ts",
     "gg": "bun src/gg/index.ts",
+    "link": "bun src/link/index.ts",
     "prisma": "prisma generate"
   },
   "devDependencies": {
@@ -15,7 +16,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
-    "prisma": "^5.11.0"
+    "@prisma/client": "latest",
+    "fast-csv": "^5.0.1",
+    "prisma": "latest"
   }
 }

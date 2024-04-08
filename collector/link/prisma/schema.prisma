@@ -52,9 +52,9 @@ model SeoulStation {
   /// 미사용(폐쇄 및 변경), 통합, 가상정류장에 대해서 0을 사용
   sttn_no               String
   /// 정류장 X좌표 / GRS80 좌표계
-  crdnt_x               Int
+  crdnt_x               Float
   /// 정류장 Y좌표 / GRS80 좌표계
-  crdnt_y               Int
+  crdnt_y               Float
   /// 버스도착정보 안내기 설치여부
   businfo_fclt_instl_yn String
 
@@ -64,25 +64,25 @@ model SeoulStation {
 model GyeonggiLink {
   id                          Int     @id @default(autoincrement())
   /// 노선 ID
-  route_id                    String?
+  route_id                    String
   /// 정류장 순서
-  sttn_ordr                   Int?
+  sttn_ordr                   Int
   /// 정류장 ID
-  sttn_id                     String?
+  sttn_id                     String
   /// GIS 거리
   gis_dstn                    Int?
   /// 누적 거리
   accmlt_dstn                 Int?
-  /// 실제거리
+  /// 실제 거리
   real_dstn                   Int?
   /// 확정 거리
   dcsn_dstn                   Int?
   /// 진행구분 코드
   progrs_div_cd               String?
   /// 등록아이디
-  regist_id                   String?
+  // regist_id                   String?
   /// 등록일자
-  regist_de                   String?
+  // regist_de                   String?
   /// 사용구분
   use_div                     String?
   /// 벽지노선 유무
@@ -103,13 +103,13 @@ model GyeonggiStation {
   /// 정류장 명칭
   sttn_nm            String?
   /// X 좌표
-  x_crdnt            Int?
+  x_crdnt            Float?
   /// Y 좌표
-  y_crdnt            Int?
+  y_crdnt            Float?
   /// GPS X좌표
-  gps_x_crdnt        Int?
+  gps_x_crdnt        Float?
   /// GPS Y좌표
-  gps_y_crdnt        Int?
+  gps_y_crdnt        Float?
   /// 링크 아이디
   rink_id            String?
   /// 정류장 유형
@@ -130,11 +130,11 @@ model GyeonggiStation {
   /// 데이터 표출 유무
   data_exprs_extno   String?
   /// 등록 아이디
-  regist_id          String?
+  // regist_id          String?
   /// 등록 일자
-  regist_de          String?
+  // regist_de          String?
   /// 비고
-  rm                 String?
+  // rm                 String?
   /// 표지판 유형
   signpost_type      String?
   /// 행정동코드
@@ -144,11 +144,11 @@ model GyeonggiStation {
   /// 사용구분
   use_div            String?
   /// 정류장 중국어명
-  sttn_chn_nm        String?
+  // sttn_chn_nm        String?
   /// 정류장 일본어명
-  sttn_jpnlang_nm    String?
+  // sttn_jpnlang_nm    String?
   /// 정류장 베트남어명
-  sttn_vietnam_nm    String?
+  // sttn_vietnam_nm    String?
   /// DRT 유무
   drt_extno          String?
   /// 정류장 유형명
@@ -159,4 +159,47 @@ model GyeonggiStation {
   mark_type_nm       String?
 
   @@map("gyeonggi_station")
+}
+
+model TotalLink {
+  /// ID (FK)
+  // id             Int    @id @default(autoincrement())
+  /// 노선 ID
+  routeId        BigInt @map("route_id")
+  /// 출발정류장 ID
+  startStationId BigInt @map("start_station_id")
+  /// 도착정류장 ID
+  endStationId   BigInt @map("end_station_id")
+  /// 운행 소요시간 (초)
+  tripTime       Int    @map("trip_time")
+  /// 운행 거리 (m)
+  tripDistance   Int    @map("trip_distance")
+  /// 정류장 순서
+  stationOrder   Int    @map("station_order")
+
+  // 복합 PK
+  @@id(fields: [routeId, startStationId, endStationId])
+  @@map("total_link")
+}
+
+model link_speed_average {
+  id          Int    @id @default(autoincrement())
+  /// 년도
+  year        Int
+  /// 지역
+  location    String
+  /// 평일 (km/h)
+  weekdayKmh  Float
+  /// 평일 (m/s)
+  weekdayMs   Float
+  /// 토요일 (km/h)
+  saturdayKmh Float
+  /// 토요일 (m/s)
+  saturdayMs  Float
+  /// 일요일 (km/h)
+  sundayKmh   Float
+  /// 일요일 (m/s)
+  sundayMs    Float
+
+  @@map("link_speed_average")
 }
