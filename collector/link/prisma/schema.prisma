@@ -1,6 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,7 +14,6 @@ datasource db {
 }
 
 model SeoulLink {
-  id             Int    @id @default(autoincrement())
   /// 노선 ID
   route_id       String
   /// 정류장 ID
@@ -21,48 +23,11 @@ model SeoulLink {
   /// 정류장 순서
   sttn_ordr      Int
 
-  @@unique([route_id, sttn_id])
+  @@id([route_id, sttn_id])
   @@map("seoul_link")
 }
 
-model SeoulRoute {
-  id         Int    @id @default(autoincrement())
-  /// 노선 ID
-  route_id   String @unique
-  /// 노선명
-  route_nm   String
-  /// 노선 유형
-  route_type String
-  /// 거리
-  dstnc      Int
-
-  @@map("seoul_route")
-}
-
-model SeoulStation {
-  id                    Int    @id @default(autoincrement())
-  /// 정류장 ID
-  sttn_id               String @unique
-  /// 정류장 명칭
-  sttn_nm               String
-  /// 정류장 유형
-  sttn_type             String
-  /// 정류장번호 ARS ID
-  /// 0인 경우가 있는데
-  /// 미사용(폐쇄 및 변경), 통합, 가상정류장에 대해서 0을 사용
-  sttn_no               String
-  /// 정류장 X좌표 / GRS80 좌표계
-  crdnt_x               Float
-  /// 정류장 Y좌표 / GRS80 좌표계
-  crdnt_y               Float
-  /// 버스도착정보 안내기 설치여부
-  businfo_fclt_instl_yn String
-
-  @@map("seoul_station")
-}
-
 model GyeonggiLink {
-  id                          Int     @id @default(autoincrement())
   /// 노선 ID
   route_id                    String
   /// 정류장 순서
@@ -92,76 +57,11 @@ model GyeonggiLink {
   /// 벽지노선 유무명
   use_div_nm                  String?
 
-  @@unique([route_id, sttn_id])
+  @@id([route_id, sttn_id])
   @@map("gyeonggi_link")
 }
 
-model GyeonggiStation {
-  id                 Int     @id @default(autoincrement())
-  /// 정류장 ID
-  sttn_id            String  @unique
-  /// 정류장 명칭
-  sttn_nm            String?
-  /// X 좌표
-  x_crdnt            Float?
-  /// Y 좌표
-  y_crdnt            Float?
-  /// GPS X좌표
-  gps_x_crdnt        Float?
-  /// GPS Y좌표
-  gps_y_crdnt        Float?
-  /// 링크 아이디
-  rink_id            String?
-  /// 정류장 유형
-  sttn_type          String?
-  /// 환승정류장 유무
-  transit_sttn_extno String?
-  /// 중앙차로 여부
-  cntr_cartrk_yn     String?
-  /// 정류장 영문명
-  sttn_eng_nm        String?
-  /// ARS ID
-  /// 서울과 경기의 ARS ID가 다름
-  /// 서울: 서울00000 (서울 prefix 가 붙음)
-  /// 경기: 00000
-  ars_id             String?
-  /// 기관코드
-  inst_cd            String?
-  /// 데이터 표출 유무
-  data_exprs_extno   String?
-  /// 등록 아이디
-  // regist_id          String?
-  /// 등록 일자
-  // regist_de          String?
-  /// 비고
-  // rm                 String?
-  /// 표지판 유형
-  signpost_type      String?
-  /// 행정동코드
-  administ_dong_cd   String?
-  /// 권역코드
-  volm_statn_cd      String?
-  /// 사용구분
-  use_div            String?
-  /// 정류장 중국어명
-  // sttn_chn_nm        String?
-  /// 정류장 일본어명
-  // sttn_jpnlang_nm    String?
-  /// 정류장 베트남어명
-  // sttn_vietnam_nm    String?
-  /// DRT 유무
-  drt_extno          String?
-  /// 정류장 유형명
-  station_tp_nm      String?
-  /// 환승역타입명
-  chng_station_yn_nm String?
-  /// 표지판 유형명
-  mark_type_nm       String?
-
-  @@map("gyeonggi_station")
-}
-
-model TotalLink {
+model Link {
   /// ID (FK)
   // id             Int    @id @default(autoincrement())
   /// 노선 ID
@@ -179,11 +79,10 @@ model TotalLink {
 
   // 복합 PK
   @@id(fields: [routeId, startStationId, endStationId])
-  @@map("total_link")
+  @@map("link")
 }
 
 model link_speed_average {
-  id          Int    @id @default(autoincrement())
   /// 년도
   year        Int
   /// 지역
@@ -201,5 +100,6 @@ model link_speed_average {
   /// 일요일 (m/s)
   sundayMs    Float
 
+  @@id([year, location])
   @@map("link_speed_average")
 }

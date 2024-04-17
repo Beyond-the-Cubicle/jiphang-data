@@ -1,23 +1,24 @@
 {
   "name": "link",
-  "module": "index.ts",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "seoul": "bun src/seoul/index.ts",
-    "gg": "bun src/gg/index.ts",
-    "link": "bun src/link/index.ts",
-    "prisma": "prisma generate"
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.12.1",
+    "dotenv": "^16.4.5",
+    "fast-csv": "^5.0.1",
+    "prisma": "^5.12.1"
   },
   "devDependencies": {
-    "bun-types": "latest",
-    "prettier": "^3.1.1"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "@prisma/client": "latest",
-    "fast-csv": "^5.0.1",
-    "prisma": "latest"
+    "@types/node": "^20.12.7",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   }
 }
