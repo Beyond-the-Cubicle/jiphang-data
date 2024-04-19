@@ -28,7 +28,7 @@ export const makeSeoulDataset = (
           routeId: start.route_id,
           startStationId: start.sttn_id,
           endStationId: end.sttn_id,
-          tripTime: totalDistance / speed.weekdayMs,
+          tripTime: Math.round(totalDistance / speed.weekdayMs),
           tripDistance: totalDistance,
           stationOrder: start.sttn_ordr,
         };
@@ -88,7 +88,7 @@ export const makeGGDataset = (
           routeId: start.route_id,
           startStationId: start.sttn_id,
           endStationId: end.sttn_id,
-          tripTime: totalDistance / speed.weekdayMs,
+          tripTime: Math.round(totalDistance / speed.weekdayMs),
           tripDistance: totalDistance,
           stationOrder: start.sttn_ordr,
         };

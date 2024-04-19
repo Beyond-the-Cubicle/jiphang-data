@@ -1,9 +1,10 @@
 import * as fs from "fs";
 import { makeGGDataset, makeSeoulDataset } from "./utils";
-import { format, writeToPath } from "fast-csv";
+import { format, writeToBuffer, writeToPath } from "fast-csv";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
 import { IBasicLink, ISpeed } from "./interface";
+
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -114,16 +115,24 @@ export async function makeStandardLinkData() {
   console.log("중복삭제 후:", result.length);
   console.log("중복 갯수: ", dataset.length - result.length);
 
-  // TODO 메모리 터지는거 고쳐야함 ...
-  writeToPath("./total-link.csv", result, {
-    quote: true,
-    headers: [
-      "routeId",
-      "startStationId",
-      "endStationId",
-      "tripTime",
-      "tripDistance",
-      "stationOrder",
-    ],
-  });
+  const splitSize = 1000000;
+  for (let i = 0; i < result.length; i += splitSize) {
+    const data = result.slice(i, i + splitSize);
+    const index = Math.floor(i / splitSize) + 1;
+
+    console.log(`파일 생성중... standard_link_${index}.csv`);
+    const buf = await writeToBuffer(data, {
+      quote: true,
+      headers: [
+        "routeId",
+        "startStationId",
+        "endStationId",
+        "tripTime",
+        "tripDistance",
+        "stationOrder",
+      ],
+    });
+    // if file exists, it will be overwritten
+    fs.writeFileSync(`./data/standard_link_${index}.csv`, buf);
+  }
 }
