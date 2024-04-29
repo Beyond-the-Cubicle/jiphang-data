@@ -1,9 +1,7 @@
-import * as fs from "fs";
 import { makeGGDataset, makeSeoulDataset } from "./utils";
-import { format, writeToBuffer, writeToPath } from "fast-csv";
 import dotenv from "dotenv";
 import { PrismaClient } from "@prisma/client";
-import { IBasicLink, ISpeed } from "./interface";
+import { ISpeed } from "./interface";
 
 dotenv.config();
 
@@ -56,83 +54,58 @@ export async function makeStandardLinkData() {
     ["서울", "경기"].includes(s.location),
   );
 
-  const generateSeoulBasicLink = async () => {
-    const seoulSpeed = speeds.find((s) => s.location === "서울")!;
+  const seoulSpeed = speeds.find((s) => s.location === "서울")!;
+  const ggSpeed = speeds.find((s) => s.location === "경기")!;
+
+  const ggRouteIds = await prisma.gyeonggiLink.groupBy({
+    by: ["route_id"],
+  });
+
+  const seoulRouteIds = await prisma.seoulLink.groupBy({
+    by: ["route_id"],
+  });
+
+  for (let i = 0; i < ggRouteIds.length; i++) {
+    console.log(`경기 ${i + 1}번째`);
+    const routeId = ggRouteIds[i].route_id;
+    const ggLink = await prisma.gyeonggiLink.findMany({
+      where: {
+        route_id: routeId,
+      },
+    });
+    const dataset = makeGGDataset(ggLink, ggSpeed);
+    await prisma.link.createMany({
+      data: dataset.map((v) => ({
+        routeId: Number(v.routeId),
+        startStationId: Number(v.startStationId),
+        endStationId: Number(v.endStationId),
+        tripTime: v.tripTime,
+        tripDistance: v.tripDistance,
+        stationOrder: v.stationOrder,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  for (let i = 0; i < seoulRouteIds.length; i++) {
+    console.log(`서울 ${i + 1}번째`);
+    const routeId = seoulRouteIds[i].route_id;
     const seoulLink = await prisma.seoulLink.findMany({
-      orderBy: [
-        {
-          route_id: "asc",
-        },
-        {
-          sttn_ordr: "asc",
-        },
-      ],
+      where: {
+        route_id: routeId,
+      },
     });
     const dataset = makeSeoulDataset(seoulLink, seoulSpeed);
-
-    const data = dataset.map((v) => ({
-      routeId: v.routeId,
-      startStationId: v.startStationId,
-      endStationId: v.endStationId,
-      tripTime: v.tripTime,
-      tripDistance: v.tripDistance,
-      stationOrder: v.stationOrder,
-    }));
-
-    return data;
-  };
-
-  const generateGGBasicLinkData = async () => {
-    const ggSpeed = speeds.find((s) => s.location === "경기")!;
-    const ggLink = await prisma.gyeonggiLink.findMany();
-    const dataset = makeGGDataset(ggLink, ggSpeed);
-
-    const data = dataset.map((v) => ({
-      routeId: v.routeId,
-      startStationId: v.startStationId,
-      endStationId: v.endStationId,
-      tripTime: v.tripTime,
-      tripDistance: v.tripDistance,
-      stationOrder: v.stationOrder,
-    }));
-
-    return data;
-  };
-
-  const seoulData = await generateSeoulBasicLink();
-  const ggData = await generateGGBasicLinkData();
-
-  const dataset = seoulData.concat(ggData);
-  console.log("중복삭제 전:", dataset.length);
-  // 중복 삭제
-  const map = new Map<string, IBasicLink>();
-  dataset.forEach((v) => {
-    const key = `${v.routeId}-${v.startStationId}-${v.endStationId}`;
-    map.set(key, v);
-  });
-  const result = Array.from(map.values());
-
-  console.log("중복삭제 후:", result.length);
-  console.log("중복 갯수: ", dataset.length - result.length);
-
-  const splitSize = 1000000;
-  for (let i = 0; i < result.length; i += splitSize) {
-    const data = result.slice(i, i + splitSize);
-    const index = Math.floor(i / splitSize) + 1;
-
-    console.log(`파일 생성중... standard_link_${index}.csv`);
-    const buf = await writeToBuffer(data, {
-      quote: true,
-      headers: [
-        "routeId",
-        "startStationId",
-        "endStationId",
-        "tripTime",
-        "tripDistance",
-        "stationOrder",
-      ],
+    await prisma.link.createMany({
+      data: dataset.map((v) => ({
+        routeId: Number(v.routeId),
+        startStationId: Number(v.startStationId),
+        endStationId: Number(v.endStationId),
+        tripTime: v.tripTime,
+        tripDistance: v.tripDistance,
+        stationOrder: v.stationOrder,
+      })),
+      skipDuplicates: true,
     });
-    // if file exists, it will be overwritten
-    fs.writeFileSync(`./data/standard_link_${index}.csv`, buf);
   }
 }

@@ -10,9 +10,9 @@ export interface ISpeed {
 }
 
 export interface IBasicLink {
-  routeId: string;
-  startStationId: string;
-  endStationId: string;
+  routeId: number;
+  startStationId: number;
+  endStationId: number;
   tripTime: number;
   tripDistance: number;
   stationOrder: number;
