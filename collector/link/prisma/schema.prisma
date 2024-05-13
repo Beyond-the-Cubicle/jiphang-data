@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SeoulLink {
+  /// 노선 ID
+  route_id       String
+  /// 정류장 ID
+  sttn_id        String
+  /// 정류장간 구간거리
+  sttn_dstnc_mtr Int
+  /// 정류장 순서
+  sttn_ordr      Int
+
+  @@id([route_id, sttn_id])
+  @@map("seoul_link")
+}
+
+model GyeonggiLink {
+  /// 노선 ID
+  route_id                    String
+  /// 정류장 순서
+  sttn_ordr                   Int
+  /// 정류장 ID
+  sttn_id                     String
+  /// GIS 거리
+  gis_dstn                    Int?
+  /// 누적 거리
+  accmlt_dstn                 Int?
+  /// 실제 거리
+  real_dstn                   Int?
+  /// 확정 거리
+  dcsn_dstn                   Int?
+  /// 진행구분 코드
+  progrs_div_cd               String?
+  /// 등록아이디
+  // regist_id                   String?
+  /// 등록일자
+  // regist_de                   String?
+  /// 사용구분
+  use_div                     String?
+  /// 벽지노선 유무
+  unwel_hno_statn_route_extno String?
+  /// 진행구분 코드명
+  progrs_div_cd_nm            String?
+  /// 벽지노선 유무명
+  use_div_nm                  String?
+
+  @@id([route_id, sttn_id])
+  @@map("gyeonggi_link")
+}
+
+model Link {
+  /// ID (FK)
+  // id             Int    @id @default(autoincrement())
+  /// 노선 ID
+  routeId        BigInt @map("route_id")
+  /// 출발정류장 ID
+  startStationId BigInt @map("start_station_id")
+  /// 도착정류장 ID
+  endStationId   BigInt @map("end_station_id")
+  /// 운행 소요시간 (초)
+  tripTime       Int    @map("trip_time")
+  /// 운행 거리 (m)
+  tripDistance   Int    @map("trip_distance")
+  /// 정류장 순서
+  stationOrder   Int    @map("station_order")
+
+  // 복합 PK
+  @@id(fields: [routeId, startStationId, endStationId])
+  @@map("link")
+}
+
+model link_speed_average {
+  /// 년도
+  year        Int
+  /// 지역
+  location    String
+  /// 평일 (km/h)
+  weekdayKmh  Float
+  /// 평일 (m/s)
+  weekdayMs   Float
+  /// 토요일 (km/h)
+  saturdayKmh Float
+  /// 토요일 (m/s)
+  saturdayMs  Float
+  /// 일요일 (km/h)
+  sundayKmh   Float
+  /// 일요일 (m/s)
+  sundayMs    Float
+
+  @@id([year, location])
+  @@map("link_speed_average")
+}
