@@ -18,6 +18,8 @@
 
 ### 실행방법
 
+#### Spring Start
+
 1. MySQL 설치 및 실행
     1. MySQL 설치 및 실행
         ```text
@@ -37,6 +39,16 @@
 
 3. configuration 정의
     1. 최초 실행 시 spring.jpa.hibernate.ddl-auto: create
+
+#### Docker start
+
+1. docker build -t bus-route-information .
+2. docker run -d --name collect-bus-route-information \
+   -e DB_PASSWORD=${DB_PASSWORD:root!23$} \
+   -e DDL_AUTO=${DDL_AUTO:none} \
+   -e DATA_PORTAL_SERVICE_KEY=${DATA_PORTAL_SERVICE_KEY:data-portal-service-key} \
+   -e DATA_DREAM_SERVICE_KEY=${DATA_DREAM_SERVICE_KEY:data-dream-service-key} \
+   route-information:latest
 
 ```yaml
 spring:

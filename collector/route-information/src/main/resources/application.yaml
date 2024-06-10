@@ -6,13 +6,13 @@ spring:
     password: ${DB_PASSWORD:root!23$}
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: ${DDL_AUTO:none}
 
 logging:
   level:
     root: info
 
 data-portal:
-  service-key: data-portal-service-key
+  service-key: ${DATA_PORTAL_SERVICE_KEY:data-portal-service-key}
 data-dream:
-  service-key: data-dream-service-key
+  service-key: ${DATA_DREAM_SERVICE_KEY:data-dream-service-key}
