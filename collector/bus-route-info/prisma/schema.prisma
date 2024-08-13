@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model OriginalGyeonggiBusRoute {
+  route_id                      String    @id   // 노선아이디
+  route_name                    String          // 노선번호
+
+  @@map("original_gyeonggi_bus_route")
+}
+
+model OriginalGyeonggiBusRouteInfo {
+  route_id                      String    @id   // 노선아이디
+  route_name                    String?         // 노선번호
+  route_type_cd                 String?         // 노선유형
+  route_type_name               String?         // 노선유형명
+  start_station_id              String?         // 기점정류소 아이디
+  start_station_name            String?         // 기점정류소명
+  start_mobile_no               String?         // 기점정류소번호
+  end_station_id                String?         // 종점정류소 아이디
+  end_station_name              String?         // 종점정류소명
+  region_name                   String?         // 지역명
+  district_cd                   String?         // 관할지역
+  up_first_time                 String?         // 평일 기점 첫차시간
+  up_last_time                  String?         // 평일 기점 막차시간
+  down_first_time               String?         // 평일 종점 첫차시간
+  down_last_time                String?         // 평일 종점 막차시간
+  peek_alloc                    String?         // 평일 최소 배차시간
+  n_peek_alloc                  String?         // 평일 최대 배차시간
+  company_id                    String?         // 운수업체아이디
+  company_name                  String?         // 운수업체명
+  company_tel                   String?         // 운수업체 전화번호
+  collection_date               String          // 수집 날짜
+
+  @@map("original_gyeonggi_bus_route_info")
+}
+
+model OriginalSeoulBusRouteInfo {
+  collection_date               String          // 수집 날짜
+  bus_route_id                  String          // 노선 ID
+  bus_route_nm                  String?         // 노선명 (DB관리용)
+  bus_route_abrv                String?         // 노선명 (안내용 - 마을버스 제외)
+  length                        String?         // 노선 길이 (Km)
+  route_type                    String?         // 노선 유형 (1:공항, 2:마을, 3:간선, 4:지선, 5:순환, 6:광역, 7:인천, 8:경기, 9:폐지, 0:공용)
+  st_station_nm                 String?         // 기점
+  ed_station_nm                 String?         // 종점
+  term                          String?         // 배차간격 (분)
+  last_bus_yn                   String?         // 막차운행여부
+  first_bus_tm                  String?         // 금일첫차시간
+  last_bus_tm                   String?         // 금일막차시간
+  first_low_tm                  String?         // 금일저상첫차시간
+  last_low_tm                   String?         // 금일저상막차시간
+  corp_nm                       String?         // 운수사명
+
+  @@id([collection_date, bus_route_id])
+  @@map("original_seoul_bus_route_info")
+}
+
+model BusRouteInfo {
+  route_id                      String    @id   // 노선 ID
+  route_name                    String          // 노선 번호
+  route_type                    String          // 노선 유형
+  start_station_name            String          // 기점정류소명
+  end_station_name              String          // 종점정류소명
+  maximum_dispatch_interval     String          // 평일 최대 배차시간
+  minimum_dispatch_interval     String          // 평일 최소 배차시간
+  start_station_first_time      String?         // 기점 첫차 시간
+  start_station_last_time       String?         // 기점 막차 시간
+  start_station_low_first_time  String?         // 기점 저상 첫차 시간
+  start_station_low_last_time   String?         // 기점 저상 막차 시간
+  end_station_first_time        String?         // 종점 첫차 시간
+  end_station_last_time         String?         // 종점 막차 시간
+
+  @@map("bus_route_info")
+}
