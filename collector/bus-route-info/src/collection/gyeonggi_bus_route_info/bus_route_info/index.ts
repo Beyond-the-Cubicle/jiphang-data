@@ -40,7 +40,7 @@ const getGyeonggiBusRouteInfoData = async (routeId: string): Promise<GyeonggiBus
                 case '4':
                     return { routeId: routeId };
                 default:
-                    throw new Error(`     [경기] 버스 노선 정보 요청 실패: ${response.response.msgHeader.resultMessage}`);
+                    throw new Error(`     [경기] 버스 노선(${routeId}) 정보 요청 실패: ${response.response.msgHeader.resultMessage}`);
             }
         } else {
             console.warn(`     [경기] 버스 노선 정보 요청 재시도: msgHeader 빈값 응답`);
@@ -58,7 +58,7 @@ const getGyeonggiBusRouteInfoData = async (routeId: string): Promise<GyeonggiBus
                 DATA_PORTAL_SERVICE_KEY_LIST.shift();
                 return await getGyeonggiBusRouteInfoData(routeId);
             default:
-                throw new Error(`     [경기] 버스 노선 정보 요청 실패: ${response.OpenAPI_ServiceResponse.cmmMsgHeader.returnAuthMsg}`);
+                throw new Error(`     [경기] 버스 노선(${routeId}) 정보 요청 실패: ${response.OpenAPI_ServiceResponse.cmmMsgHeader.returnAuthMsg}`);
         }
     }
     throw new Error(`     [경기] 버스 노선 정보 요청 실패`);
