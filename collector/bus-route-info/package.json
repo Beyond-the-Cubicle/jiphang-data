@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc && node --max-old-space-size=4096 dist/index.js",
-    "docker": "./start.sh"
+    "docker": "docker build -t bus-route-info . && docker run --name bus-route-info bus-route-info && docker rm bus-route-info && docker rmi bus-route-info:latest"
   },
   "keywords": [],
   "author": "",
