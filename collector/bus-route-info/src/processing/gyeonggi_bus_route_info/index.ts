@@ -14,7 +14,7 @@ export const processGyeonggiBusRouteInfo = async (): Promise<void> => {
         .map((gyeonggiBusRouteInfo) => {
             upsert({
                 route_id: gyeonggiBusRouteInfo.route_id,
-                route_name: gyeonggiBusRouteInfo.region_name!,
+                route_name: gyeonggiBusRouteInfo.route_name!,
                 route_type: parseRouteType(gyeonggiBusRouteInfo.route_type_cd!),
                 start_station_name: gyeonggiBusRouteInfo.start_station_name!,
                 end_station_name: gyeonggiBusRouteInfo.end_station_name!,
