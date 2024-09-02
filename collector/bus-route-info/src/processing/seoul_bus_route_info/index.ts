@@ -14,6 +14,7 @@ export const processSeoulBusRouteInfo = async (): Promise<void> => {
         .map((seoulBusRouteInfo) => {
             upsert({
                 route_id: seoulBusRouteInfo.bus_route_id,
+                route_region: 'SEOUL',
                 route_name: seoulBusRouteInfo.bus_route_nm!,
                 route_type: parseRouteType(seoulBusRouteInfo.route_type!),
                 start_station_name: seoulBusRouteInfo.st_station_nm!,

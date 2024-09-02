@@ -1,6 +1,7 @@
 create table bus_route_info (
 
     route_id                        varchar(191)    not null    comment '노선 아이디',
+    route_region                    varchar(191)    not null    comment '노선 지역',    
     route_name                      varchar(191)    not null    comment '노선 번호',
     route_type                      varchar(191)    not null    comment '노선 유형',
     start_station_name              varchar(191)    not null    comment '기점정류소명',

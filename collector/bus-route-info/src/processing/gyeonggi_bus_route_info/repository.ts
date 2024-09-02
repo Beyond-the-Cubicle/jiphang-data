@@ -12,6 +12,7 @@ export const upsert = async (busRouteInfo: BusRouteInfo): Promise<void> => {
         },
         update: {
             route_name: busRouteInfo.route_name,
+            route_region: busRouteInfo.route_region,
             route_type: busRouteInfo.route_type,
             start_station_name: busRouteInfo.start_station_name,
             end_station_name: busRouteInfo.end_station_name,
@@ -26,6 +27,7 @@ export const upsert = async (busRouteInfo: BusRouteInfo): Promise<void> => {
         },
         create: {
             route_id: busRouteInfo.route_id,
+            route_region: busRouteInfo.route_region,
             route_name: busRouteInfo.route_name,
             route_type: busRouteInfo.route_type,
             start_station_name: busRouteInfo.start_station_name,

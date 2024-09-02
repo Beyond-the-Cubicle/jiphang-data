@@ -63,6 +63,7 @@ model OriginalSeoulBusRouteInfo {
 
 model BusRouteInfo {
   route_id                      String    @id   // 노선 ID
+  route_region                    String        // 노선 지역
   route_name                    String          // 노선 번호
   route_type                    String          // 노선 유형
   start_station_name            String          // 기점정류소명
