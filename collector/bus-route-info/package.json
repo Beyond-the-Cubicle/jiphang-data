@@ -1,0 +1,26 @@
+{
+  "name": "bus-route-info",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node --max-old-space-size=4096 dist/index.js",
+    "docker": "docker build -t bus-route-info . && docker run --name bus-route-info bus-route-info && docker rm bus-route-info && docker rmi bus-route-info:latest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "dayjs": "^1.11.12",
+    "xml2js": "^0.6.2",
+    "dotenv": "^16.4.5",
+    "p-limit": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "@types/xml2js": "^0.4.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
